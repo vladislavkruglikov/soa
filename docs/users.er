@@ -1,0 +1,27 @@
+Table users {
+  id integer [primary key, increment]
+  username varchar [not null, unique]
+  password varchar [not null]
+  role_id integer [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table roles {
+  id integer [primary key, increment]
+  role_name varchar [not null, unique]
+  description varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table user_profiles {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  full_name varchar [not null]
+  bio text
+  birth_date timestamp
+}
+
+Ref: users.role_id > roles.id
+Ref: user_profiles.user_id > users.id

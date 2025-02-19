@@ -1,0 +1,27 @@
+Table posts {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  content text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table comments {
+  id integer [primary key, increment]
+  post_id integer [not null]
+  user_id integer [not null]
+  content text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table posts_history {
+  id integer [primary key, increment]
+  post_id integer [not null]
+  old_content text [not null]
+  new_content text [not null]
+  changed_at timestamp [not null]
+}
+
+Ref: comments.post_id > posts.id
+Ref: posts_history.post_id > posts.id
