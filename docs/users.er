@@ -1,7 +1,7 @@
 Table users {
   id integer [primary key, increment]
   username varchar [not null, unique]
-  password varchar [not null]
+  password_hash varchar [not null]
   role_id integer [not null]
   created_at timestamp
   updated_at timestamp

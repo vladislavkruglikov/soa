@@ -1,6 +1,6 @@
 Table posts {
   id integer [primary key, increment]
-  user_id integer [not null]
+  user_id integer [not null, increment]
   content text [not null]
   created_at timestamp [not null]
   updated_at timestamp [not null]

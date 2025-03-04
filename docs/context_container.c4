@@ -34,7 +34,7 @@ model {
 
     message_broker = container "Message Broker" {
       description "Брокер сообщений для отправки событий (лайки, просмотры, комментарии) в Stats Service"
-      technology "RabbitMQ, Kafka"
+      technology "Kafka"
     }
 
     user_db = container "User Database" {
@@ -49,7 +49,7 @@ model {
 
     posts_db = container "Posts Database" {
       description "База данных для сервиса постов и комментариев"
-      technology "PostgreSQL или Cassandra"
+      technology "PostgreSQL"
     }
 
     user_service -> user_db "CRUD операции"
