@@ -1,0 +1,25 @@
+Table post_stats {
+  id integer [primary key, increment]
+  post_id integer [not null]
+  like_count integer [not null]
+  view_count integer [not null]
+  comment_count integer [not null]
+  last_updated timestamp [not null]
+}
+
+Table comment_stats {
+  id integer [primary key, increment]
+  comment_id integer [not null]
+  like_count integer [not null]
+  view_count integer [not null]
+  last_updated timestamp [not null]
+}
+
+Table user_engagement {
+  id integer [primary key, increment]
+  user_id integer [not null]
+  total_likes integer [not null]
+  total_views integer [not null]
+  total_comments integer [not null]
+  last_updated timestamp [not null]
+}

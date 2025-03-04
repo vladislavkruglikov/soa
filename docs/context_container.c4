@@ -1,0 +1,79 @@
+specification {
+  element actor
+  element system
+  element container
+}
+
+model {
+  ui = actor "User Interface" {
+    description "Фронтенд для социальной сети"
+  }
+
+  platform = system "Social Network Platform" {
+    description "Социальная сеть с 4 сервисами: API Gateway, User Service, Stats Service, Posts & Comments Service"
+
+    api_gateway = container "API Gateway" {
+      description "Принимает запросы от UI и перенаправляет их в другие сервисы"
+      technology "REST API, Docker"
+    }
+
+    user_service = container "User Service" {
+      description "Регистрация, аутентификация, хранение данных пользователей и их ролей"
+      technology "Python/FastAPI, Docker"
+    }
+
+    stats_service = container "Stats Service" {
+      description "Обработка событий и предоставление API статистики"
+      technology "ClickHouse, Docker"
+    }
+
+    posts_service = container "Posts & Comments Service" {
+      description "Управление постами и комментариями"
+      technology "Python/FastAPI, Docker"
+    }
+
+    message_broker = container "Message Broker" {
+      description "Брокер сообщений для отправки событий (лайки, просмотры, комментарии) в Stats Service"
+      technology "Kafka"
+    }
+
+    user_db = container "User Database" {
+      description "База данных для сервиса пользователей"
+      technology "PostgreSQL"
+    }
+
+    stats_db = container "Stats Database" {
+      description "База данных для сервиса статистики"
+      technology "ClickHouse"
+    }
+
+    posts_db = container "Posts Database" {
+      description "База данных для сервиса постов и комментариев"
+      technology "PostgreSQL"
+    }
+
+    user_service -> user_db "CRUD операции"
+    stats_service -> stats_db "Запись аналитики"
+    posts_service -> posts_db "Сохранение постов и комментариев"
+    
+    api_gateway -> user_service "REST API: регистрация и аутентификация"
+    api_gateway -> posts_service "REST API: работа с постами и комментариями"
+    api_gateway -> stats_service "REST API: получение статистики"
+    api_gateway -> message_broker "Отправка событий"
+    message_broker -> stats_service "Прием событий"
+  }
+
+  ui -> api_gateway "HTTP/HTTPS запросы"
+}
+
+views {
+  view context {
+    title "Контекстная диаграмма"
+    include ui, platform
+  }
+
+  view containers of platform {
+    title "Контейнерная диаграмма"
+    include api_gateway, user_service, stats_service, posts_service, message_broker, user_db, stats_db, posts_db
+  }
+}
