@@ -1,0 +1,10 @@
+fastapi
+uvicorn==0.22.0
+sqlalchemy==1.4.46
+passlib==1.7.4
+python-jose[cryptography]==3.3.0
+pydantic==1.10.7
+pydantic[email]
+python-multipart
+httpx
+starlette==0.45.0

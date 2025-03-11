@@ -16,3 +16,17 @@
 
 * https://playground.likec4.dev
 * https://dbdiagram.io
+
+## Перед началом
+
+```bash
+./start.sh
+```
+
++ запустить сервер и стрельнуть в него на создание пользователей чтобы таблицы завелись
+
+## Запускаем
+
+```bash
+docker-compose up --build user_service gateway_service
+```
