@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  user_service:
+    build: ./user_service
+    container_name: user_service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./user_service/users.db:/app/users.db
+    environment:
+      - DATABASE_FILE_NAME=sqlite:////app/users.db
+    restart: unless-stopped
+
+  gateway_service:
+    build: ./gateway_service
+    container_name: gateway_service
+    ports:
+      - "8080:8000"
+    environment:
+      - USER_SERVICE_URL=http://user_service:8000
+    restart: unless-stopped
+
+  tests:
+    build:
+      context: ./user_service
+      dockerfile: Dockerfile.test
+    container_name: user_service_tests
+    command: pytest -vv -s --maxfail=1 --disable-warnings -q
+    volumes:
+      - ./user_service/users.db:/app/users.db
+    environment:
+      - DATABASE_FILE_NAME=sqlite:////app/users.db

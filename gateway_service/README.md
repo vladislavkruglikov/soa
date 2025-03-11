@@ -9,3 +9,17 @@
 - Не хранит бизнес-логику.
 - Не обрабатывает данные самостоятельно, только маршрутизация и базовая валидация.
 - Сервис не имеет собственной БД
+
+# Примеры запросов
+
+Создать пользователя
+
+```bash
+curl -X POST "http://localhost:8080/users/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "login": "testuser",
+    "email": "test@example.com",
+    "password": "secret123"
+  }'
+```
