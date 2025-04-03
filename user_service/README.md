@@ -36,7 +36,7 @@ curl -X POST "http://localhost:8000/users/login" \
 
 ```bash
 curl -X GET "http://localhost:8000/users/profile" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImV4cCI6MTc0MTcyMjUyNH0.0XdtUfq0MOPT9cMKnTSEyc8jN3jsKgunfG5_Hmnunzs"
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdHJpbmczIiwiZXhwIjoxNzQyNTcxMTU1fQ.zkgsKwmdf-OfhDkO2_lckxB7z1CPLBqiAruKPXR-lto"
 ```
 
 Обновление профиля
