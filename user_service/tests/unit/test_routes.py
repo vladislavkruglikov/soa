@@ -37,3 +37,6 @@ def test_register_duplicate_user():
     assert response.status_code == 200, response.text
     response = client.post("/users/register", json=payload)
     assert response.status_code == 400
+
+    # TODO: что если меняем только какое то из одних полей
+    # for для каждого поля
