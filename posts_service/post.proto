@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package postservice;
+
+message Post {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  int64 creator_id = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  bool is_private = 7;
+  repeated string tags = 8;
+}
+
+message CreatePostRequest {
+  int64 user_id = 1;
+  string title = 2;
+  string description = 3;
+  bool is_private = 4;
+  repeated string tags = 5;
+}
+
+message CreatePostResponse {
+  Post post = 1;
+}
+
+message DeletePostRequest {
+  int64 user_id = 1;
+  int64 post_id = 2;
+}
+
+message DeletePostResponse {
+  bool success = 1;
+}
+
+message UpdatePostRequest {
+  int64 user_id = 1;
+  int64 post_id = 2;
+  string title = 3;
+  string description = 4;
+  bool is_private = 5;
+  repeated string tags = 6;
+}
+
+message UpdatePostResponse {
+  Post post = 1;
+}
+
+message GetPostByIdRequest {
+  int64 user_id = 1;
+  int64 post_id = 2;
+}
+
+message GetPostByIdResponse {
+  Post post = 1;
+}
+
+message ListPostsRequest {
+  int64 user_id = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+}
+
+message ListPostsResponse {
+  repeated Post posts = 1;
+  int32 total_pages = 2;
+  int32 current_page = 3;
+}
+
+service PostService {
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+  rpc DeletePost(DeletePostRequest) returns (DeletePostResponse);
+  rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
+  rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse);
+  rpc ListPosts(ListPostsRequest) returns (ListPostsResponse);
+}

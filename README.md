@@ -28,7 +28,7 @@
 ## Запускаем
 
 ```bash
-docker-compose up --build user_service gateway_service
+docker-compose up --build --force-recreate user_service gateway_service posts_service
 ```
 
 todo: readiness probe на БД
