@@ -51,3 +51,10 @@ services:
       - ./posts_service/posts.db:/app/posts.db
     environment:
       - DATABASE_FILE_NAME=sqlite:////app/posts.db
+  
+  gateway_service_tests:
+    build:
+      context: ./gateway_service
+      dockerfile: Dockerfile.test
+    container_name: gateway_service_tests
+    command: pytest -vv -s --maxfail=1 --disable-warnings -q
