@@ -1,14 +1,19 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
 
-WORKDIR /opt/posts_service
+WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /opt/posts_service/posts_service
+COPY post.proto .
+RUN python -m grpc_tools.protoc \
+    -I. \
+    --python_out=. \
+    --grpc_python_out=. \
+    post.proto
+
+COPY . .
 
 ENV PYTHONPATH=$PYTHONPATH:.
 
-EXPOSE 50051
-
-CMD ["python", "/opt/posts_service/posts_service/server.py"]
+CMD ["python", "server.py"]

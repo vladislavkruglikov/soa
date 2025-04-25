@@ -28,6 +28,7 @@
 ## Запускаем
 
 ```bash
+docker-compose up --build --force-recreate zookeeper kafka kafka-ui
 docker-compose up --build --force-recreate user_service gateway_service posts_service
 ```
 
@@ -41,3 +42,14 @@ business rule: нельзя менять логин / пароль
 
 pre condition созадвать бд новую для теста
 TODO: добавить тесты на update
+
+## https://habr.com/ru/articles/753398/
+
+http://localhost:8082
+
+Cluster name - Можете указать просто как "Kafka Cluster"
+Bootstrap Servers - Суда вам внужно вписать PLAINTEXT://kafka:29092
+metrics type -> JMX
+metrics type -> JMX
+port -> 9092
+

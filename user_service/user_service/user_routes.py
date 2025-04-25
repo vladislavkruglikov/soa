@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 from user_service import database, models, schemas, auth
 from user_service.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from user_service.kafka_config import get_kafka_producer, send_user_registration_event
 
 router = APIRouter()
 
@@ -31,6 +32,11 @@ def register_user(
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    producer = get_kafka_producer()
+    send_user_registration_event(producer, new_user.id, new_user.created_at)
+    producer.close()
+
     return new_user
 
 

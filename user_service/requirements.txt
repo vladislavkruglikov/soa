@@ -8,3 +8,4 @@ pydantic[email]
 python-multipart
 httpx
 starlette==0.45.0
+kafka-python==2.0.2

@@ -13,7 +13,7 @@ from google.protobuf.json_format import MessageToDict
 app = FastAPI(title="Gateway Service")
 
 USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://user_service:8000")
-POST_SERVICE_ADDRESS = os.getenv("POST_SERVICE_ADDRESS", "posts_service:50051")
+POST_SERVICE_ADDRESS = os.getenv("POST_SERVICE_ADDRESS", "posts_service:50052")
 
 JWT_SECRET = os.getenv("JWT_SECRET", "SECRET_KEY")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
@@ -73,6 +73,9 @@ async def handle_posts_request(full_path: str, request: Request, current_user: s
         raise HTTPException(status_code=401, detail="User id in token must be numeric")
     
     path_parts = full_path.split("/")    
+
+    # raise HTTPException(status_code=401, detail=f"custom {path_parts}")
+    
     if len(path_parts) == 1 or (len(path_parts) == 2 and path_parts[1] == ""):
         if request.method == "GET":
             try:
@@ -86,8 +89,12 @@ async def handle_posts_request(full_path: str, request: Request, current_user: s
                 page_size=page_size
             )
             grpc_resp = await posts_stub.ListPosts(grpc_req)
+            response_dict = MessageToDict(
+                grpc_resp,
+                preserving_proto_field_name=True
+            )
             return Response(
-                content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                content=json.dumps(response_dict),
                 media_type="application/json"
             )
         elif request.method == "POST":
@@ -113,42 +120,105 @@ async def handle_posts_request(full_path: str, request: Request, current_user: s
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid post ID")
         
-        if request.method == "GET":
-            grpc_req = postservice_pb2.GetPostByIdRequest(
-                user_id=uid,
-                post_id=post_id
-            )
-            grpc_resp = await posts_stub.GetPostById(grpc_req)
-            return Response(
-                content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
-                media_type="application/json"
-            )
-        elif request.method == "PUT":
-            body = await request.json()
-            grpc_req = postservice_pb2.UpdatePostRequest(
-                user_id=uid,
-                post_id=post_id,
-                title=body.get("title", ""),
-                description=body.get("description", ""),
-                is_private=body.get("is_private", False),
-                tags=body.get("tags", [])
-            )
-            grpc_resp = await posts_stub.UpdatePost(grpc_req)
-            return Response(
-                content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
-                media_type="application/json"
-            )
-        elif request.method == "DELETE":
-            grpc_req = postservice_pb2.DeletePostRequest(
-                user_id=uid,
-                post_id=post_id
-            )
-            grpc_resp = await posts_stub.DeletePost(grpc_req)
-            return Response(
-                content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
-                media_type="application/json"
-            )
+        if len(path_parts) == 2:
+            if request.method == "GET":
+                grpc_req = postservice_pb2.GetPostByIdRequest(
+                    user_id=uid,
+                    post_id=post_id
+                )
+                grpc_resp = await posts_stub.GetPostById(grpc_req)
+                return Response(
+                    content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                    media_type="application/json"
+                )
+            elif request.method == "PUT":
+                body = await request.json()
+                grpc_req = postservice_pb2.UpdatePostRequest(
+                    user_id=uid,
+                    post_id=post_id,
+                    title=body.get("title", ""),
+                    description=body.get("description", ""),
+                    is_private=body.get("is_private", False),
+                    tags=body.get("tags", [])
+                )
+                grpc_resp = await posts_stub.UpdatePost(grpc_req)
+                return Response(
+                    content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                    media_type="application/json"
+                )
+            elif request.method == "DELETE":
+                grpc_req = postservice_pb2.DeletePostRequest(
+                    user_id=uid,
+                    post_id=post_id
+                )
+                grpc_resp = await posts_stub.DeletePost(grpc_req)
+                return Response(
+                    content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                    media_type="application/json"
+                )
+            else:
+                raise HTTPException(status_code=405, detail="Method not allowed on /posts/{id}")
+        elif len(path_parts) == 3:            
+            if path_parts[2] == "like":
+                if request.method == "POST":
+                    grpc_req = postservice_pb2.LikePostRequest(
+                        user_id=uid,
+                        post_id=post_id
+                    )
+                    grpc_resp = await posts_stub.LikePost(grpc_req)
+                    return Response(
+                        content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                        media_type="application/json"
+                    )
+                elif request.method == "DELETE":
+                    grpc_req = postservice_pb2.UnlikePostRequest(
+                        user_id=uid,
+                        post_id=post_id
+                    )
+                    grpc_resp = await posts_stub.UnlikePost(grpc_req)
+                    return Response(
+                        content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                        media_type="application/json"
+                    )
+                else:
+                    raise HTTPException(status_code=405, detail="Method not allowed on /posts/{id}/like")
+            elif path_parts[2] == "comments":
+                if request.method == "GET":
+                    try:
+                        page = int(request.query_params.get("page", "1"))
+                        page_size = int(request.query_params.get("page_size", "10"))
+                    except ValueError:
+                        raise HTTPException(status_code=400, detail="Invalid query parameter format")
+                    grpc_req = postservice_pb2.ListCommentsRequest(
+                        user_id=uid,
+                        post_id=post_id,
+                        page_number=page,
+                        page_size=page_size
+                    )
+                    grpc_resp = await posts_stub.ListComments(grpc_req)
+                    return Response(
+                        content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                        media_type="application/json"
+                    )
+                elif request.method == "POST":
+                    body = await request.json()
+                    if not body.get("content"):
+                        raise HTTPException(status_code=400, detail="Content is required")
+                    grpc_req = postservice_pb2.CreateCommentRequest(
+                        user_id=uid,
+                        post_id=post_id,
+                        content=body["content"]
+                    )
+                    grpc_resp = await posts_stub.CreateComment(grpc_req)
+                    return Response(
+                        content=json.dumps(MessageToDict(grpc_resp, preserving_proto_field_name=True)),
+                        media_type="application/json"
+                    )
+                else:
+                    raise HTTPException(status_code=405, detail="Method not allowed on /posts/{id}/comments")
+            else:
+                raise HTTPException(status_code=404, detail="Invalid posts path")
         else:
-            raise HTTPException(status_code=405, detail="Method not allowed on /posts/{id}")
+            raise HTTPException(status_code=404, detail="Invalid posts path")
     else:
         raise HTTPException(status_code=404, detail="Invalid posts path")
