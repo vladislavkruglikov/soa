@@ -53,3 +53,5 @@ metrics type -> JMX
 metrics type -> JMX
 port -> 9092
 
+
+todo: дописать в gateway прокидывание ошибки
