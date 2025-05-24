@@ -26,8 +26,8 @@ curl -X POST "http://localhost:8080/users/register" \
 
 ```bash
 curl -X POST "http://localhost:8080/users/login" \
-  -F "login=username6" \
-  -F "password=username6"
+  -F "login=username7" \
+  -F "password=username7"
 ```
 
 <!-- eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlcjEiLCJleHAiOjE3NDM3ODg3NjZ9.d6dIKv0Ybrhn2SqxTiZ2SxuTqVe3DcQ8ccrxidKT-sc -->
