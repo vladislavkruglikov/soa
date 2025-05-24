@@ -21,6 +21,16 @@ services:
       - DATABASE_FILE_NAME=sqlite:////app/posts.db
     restart: unless-stopped
 
+  stats_service:
+    build: ./stats_service
+    container_name: stats_service
+    ports:
+      - "50053:50051"
+    volumes:
+      - ./user_service/users.db:/app/users.db:ro
+      - ./posts_service/posts.db:/app/posts.db:ro
+    restart: unless-stopped
+
   gateway_service:
     build: ./gateway_service
     container_name: gateway_service

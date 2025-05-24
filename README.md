@@ -29,7 +29,7 @@
 
 ```bash
 docker-compose up --build --force-recreate zookeeper kafka kafka-ui
-docker-compose up --build --force-recreate user_service gateway_service posts_service
+docker-compose up --build --force-recreate user_service gateway_service posts_service stats_service
 ```
 
 todo: readiness probe на БД
